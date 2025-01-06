@@ -1,9 +1,9 @@
 # raytracing
 fafoing raytracing in one weekend book
 
+requirements: java & feh to execute run.sh
+
 ```bash
-cmake -B build
-cmake --build build
-build/raytracing > image.ppm
+sh run.sh
 ```
 https://raytracing.github.io/books/RayTracingInOneWeekend.html
