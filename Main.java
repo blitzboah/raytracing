@@ -3,13 +3,32 @@ import java.io.IOException;
 
 public class Main {
 
+    public static Double hit_sphere(Vec3.Point3 center, double radius, Ray r){
+        Vec3 oc = r.origin().sub(center);
+        double a = Vec3.dot(r.direction(), r.direction());
+        double b = 2.0 * Vec3.dot(r.direction(), oc);
+        double c = Vec3.dot(oc, oc) - radius*radius;
+        double discriminant = b * b - 4 * a * c;
+
+        if(discriminant < 0) return -1.0;
+        else return (-b - Math.sqrt(discriminant)) / (2.0*a);
+    }
+
     public static Color ray_color(Ray r){
+
+        double t = hit_sphere(new Vec3.Point3(0,0,-1), 0.5, r);
+        if( t > 0.0){
+            Vec3 intersection = r.at(t);
+            Vec3 normal = intersection.sub(new Vec3(0,0,-1)).divide(0.5);
+            return new Color(0.5 * (normal.x() + 1), 0.5 * (normal.y() + 1), 0.5 * (normal.z() + 1));
+        }
+
         Vec3 unitDirection = Vec3.unitVector(r.direction());
-        double a = 0.5 * (unitDirection.y() + 1.0); //tweak the added value to get diff gradient
+        double a = 0.5 * (unitDirection.y() + 1.0); //tweak the direction or added value to get diff gradient
         return new Color(
-                (1.0 - a) * 1.0 + a * 0.69,
-                (1.0 - a) * 1.0 + a * 1.0,
-                (1.0 - a) * 1.0 + a * 0.69 );
+                (1.0 - a) * 1.0 + a * 0.1,
+                (1.0 - a) * 1.0 + a * 4.0,
+                (1.0 - a) * 1.0 + a * 0.6 );
     }
 
     public static void main(String[] args) {
