@@ -3,32 +3,21 @@ import java.io.IOException;
 
 public class Main {
 
-    public static Double hit_sphere(Vec3.Point3 center, double radius, Ray r){
-        Vec3 oc = r.origin().sub(center);
-        double a = Vec3.dot(r.direction(), r.direction());
-        double b = 2.0 * Vec3.dot(r.direction(), oc);
-        double c = Vec3.dot(oc, oc) - radius*radius;
-        double discriminant = b * b - 4 * a * c;
+    public static Color ray_color(Ray r, Hittable world){
 
-        if(discriminant < 0) return -1.0;
-        else return (-b - Math.sqrt(discriminant)) / (2.0*a);
-    }
-
-    public static Color ray_color(Ray r){
-
-        double t = hit_sphere(new Vec3.Point3(0,0,-1), 0.5, r);
-        if( t > 0.0){
-            Vec3 intersection = r.at(t);
-            Vec3 normal = intersection.sub(new Vec3(0,0,-1)).divide(0.5);
-            return new Color(0.5 * (normal.x() + 1), 0.5 * (normal.y() + 1), 0.5 * (normal.z() + 1));
+        HitRecord rec = new HitRecord();
+        if(world.hit(r, 0, rtweekend.INFINITY, rec)){
+            Color sphereColor = new Color(0.5,0.6,0.7);
+            return new Color(0.5 * (rec.normal.x() + 1),
+                    0.5 * (rec.normal.y() + 1),
+                    0.5 * (rec.normal.z() + 1));
         }
-
         Vec3 unitDirection = Vec3.unitVector(r.direction());
         double a = 0.5 * (unitDirection.y() + 1.0); //tweak the direction or added value to get diff gradient
         return new Color(
-                (1.0 - a) * 1.0 + a * 0.1,
-                (1.0 - a) * 1.0 + a * 4.0,
-                (1.0 - a) * 1.0 + a * 0.6 );
+                (1.0 - a) * 1.0 + a * 0.5,
+                (1.0 - a) * 1.0 + a * 0.7,
+                (1.0 - a) * 1.0 + a * 1.0 );
     }
 
     public static void main(String[] args) {
@@ -46,13 +35,20 @@ public class Main {
         String fileName = "output.ppm";
 
         try(FileWriter writer = new FileWriter(fileName)) {
-            writer.write("P3\n" +image_width+ " " +image_height+ "\n255\n");
+            writer.write("P3\n" + image_width + " " + image_height + "\n255\n");
+
+            //world
+            HittableList world = new HittableList();
+
+
+            world.add(new Sphere(new Vec3.Point3(0, 100.5, -1), 100));
+            world.add(new Sphere(new Vec3.Point3(0,0,-1), 0.5));
 
             //camera parameters
             double viewportHeight = 2.0;
             double viewportWidth = viewportHeight * (image_width / (double) image_height);
             double focalLength = 1.0;
-            Vec3.Point3 cameraCenter = new Vec3.Point3(0, 0, 0);
+            Vec3.Point3 cameraCenter = new Vec3.Point3(0, 0, -2); //tweak the z value to zoom in or zoom out
 
             //vectors defining viewports
             Vec3 viewportU = new Vec3(viewportWidth, 0, 0);
@@ -78,7 +74,7 @@ public class Main {
                     Ray r = new Ray(cameraCenter, rayDirection);
 
                     // color calculation for the ray
-                    Color pixelColor = ray_color(r);
+                    Color pixelColor = ray_color(r, world);
 
                     // write the color of the pixel to the file
                     Color.writeColor(writer, pixelColor);
