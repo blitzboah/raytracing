@@ -9,4 +9,12 @@ public class rtweekend {
     public static double degreesToRadian(double degrees){
         return degrees * PI / 180.0;
     }
+
+    public static double random_double(){
+        return Math.random();
+    }
+
+    public static double random_double(double min, double max){
+        return min + (max-min) * random_double();
+    }
 }

@@ -1,6 +1,5 @@
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintStream;
 
 public class Color extends Vec3{
     public Color(){
@@ -11,16 +10,26 @@ public class Color extends Vec3{
         super(r,g,b);
     }
 
+    @Override
+    public Color add(Vec3 v){
+        return new Color(x() + v.x(), y() + v.y(), z() + v.z());
+    }
+
+    public Color multiply(double t) {
+        return new Color(x() * t, y() * t, z() * t);
+    }
+
     public static void writeColor(FileWriter writer, Color pixelColor) throws IOException {
         //clamp values between 0 to 1
         double r = Math.min(Math.max(pixelColor.x(), 0), 1);
         double g = Math.min(Math.max(pixelColor.y(), 0), 1);
         double b = Math.min(Math.max(pixelColor.z(), 0), 1);
 
+        Interval intensity = new Interval(0.000, 0.999);
         //translate 0,1 to byte range [0,255]
-        int rByte = (int)(255.99 * r);
-        int gByte = (int)(255.99 * g);
-        int bByte = (int)(255.99 * b);
+        int rByte = (int)(255.99 * intensity.clamp(r));
+        int gByte = (int)(255.99 * intensity.clamp(g));
+        int bByte = (int)(255.99 * intensity.clamp(b));
 
         //makes sure it stays in the range
         rByte = Math.min(Math.max(rByte, 0), 255);
