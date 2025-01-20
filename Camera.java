@@ -10,7 +10,7 @@ public class Camera {
 
     // camera parameters
     private double pixel_samples_scales; //color scale factor for a sum of pixel samples
-    private Vec3.Point3 cameraCenter = new Vec3.Point3(0, 0, 0);
+    private Vec3.Point3 cameraCenter = new Vec3.Point3(0, 1, 1);
     private double viewportHeight = 2.0;
     private double viewportWidth = viewportHeight * aspect_ratio;
     private double focalLength = 1.0;
@@ -82,16 +82,15 @@ public class Camera {
     public Color rayColor(Ray r, Hittable world) {
         HitRecord rec = new HitRecord();
         if (world.hit(r, new Interval(0, Double.POSITIVE_INFINITY), rec)) {
-            return new Color(0.5 * (rec.normal.x() + 1),
-                    0.6 * (rec.normal.y() + 1),
-                    0.7 * (rec.normal.z() + 1));
+            Vec3 direction = Vec3.randomOnHemisphere(rec.normal);
+            return rayColor(new Ray(rec.p, direction), world).multiply(0.5);
         }
         Vec3 unitDirection = Vec3.unitVector(r.direction());
         double t = 0.5 * (unitDirection.y() + 1.0);
         return new Color(
-                (1.0 - t) * 1.0 + t * 0.5,
-                (1.0 - t) * 1.0 + t * 0.7,
-                (1.0 - t) * 1.0 + t * 1.0
+                (1.0 - t) * 1.0 + t * 0.1,
+                (1.0 - t) * 1.0 + t * 0.2,
+                (1.0 - t) * 1.0 + t * 0.5
         );
     }
 }

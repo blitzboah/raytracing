@@ -1,5 +1,8 @@
+import java.util.Random;
+
 public class Vec3 {
     private double[] e;
+    private static final Random random = new Random();
 
     public Vec3(){
         this.e = new double[]{0,0,0};
@@ -74,6 +77,14 @@ public class Vec3 {
         return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
     }
 
+    public static Vec3 random(){
+        return new Vec3(rtweekend.random_double(), rtweekend.random_double(), rtweekend.random_double());
+    }
+
+    public static Vec3 random(double min, double max){
+        return new Vec3(rtweekend.random_double(min, max), rtweekend.random_double(min, max), rtweekend.random_double(min, max));
+    }
+
     public static double dot(Vec3 u, Vec3 v) {
         return u.e[0] * v.e[0] + u.e[1] * v.e[1] + u.e[2] * v.e[2];
     }
@@ -88,6 +99,31 @@ public class Vec3 {
 
     public static Vec3 unitVector(Vec3 v) {
         return v.divide(v.length());
+    }
+
+    public static Vec3 randomUnitVector(){
+        while (true){
+            Vec3 p = Vec3.randomPoint(-1,1);
+            double lengthSquared = p.lengthSquared();
+            if(1e-160 < lengthSquared && lengthSquared <= 1){
+                return p.divide(Math.sqrt(lengthSquared));
+            }
+        }
+    }
+
+    public static Vec3 randomPoint(double min, double max) {
+        double x = min + (max - min) * random.nextDouble();
+        double y = min + (max - min) * random.nextDouble();
+        double z = min + (max - min) * random.nextDouble();
+        return new Vec3(x, y, z);
+    }
+
+    public static Vec3 randomOnHemisphere(Vec3 normal){
+        Vec3 on_unit_sphere = randomUnitVector();
+        if(Vec3.dot(on_unit_sphere, normal) > 0.0)
+            return on_unit_sphere;
+        else
+            return on_unit_sphere.nega();
     }
 
     @Override

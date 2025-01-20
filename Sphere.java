@@ -22,10 +22,10 @@ public class Sphere implements Hittable{
 
         double sqrtd = Math.sqrt(discriminant);
 
-        double root = (h - sqrtd) / a;
-        if(rayT.surrounds(root)){
-            root = (h + sqrtd) / a;
-            if(rayT.surrounds(root))
+        double root = (-h - sqrtd) / a;
+        if(!rayT.surrounds(root)){
+            root = (-h + sqrtd) / a;
+            if(!rayT.surrounds(root))
                 return false;
         }
 
