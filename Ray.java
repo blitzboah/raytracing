@@ -20,4 +20,12 @@ public class Ray {
     public Vec3 at(double t){
         return orig.add(dir.multiply(t));
     }
+
+    public void setOrigin(Vec3.Point3 origin) {
+        this.orig = origin;
+    }
+
+    public void setDirection(Vec3 direction) {
+        this.dir = direction;
+    }
 }

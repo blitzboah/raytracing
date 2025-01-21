@@ -77,6 +77,11 @@ public class Vec3 {
         return e[0]*e[0] + e[1]*e[1] + e[2]*e[2];
     }
 
+    public boolean nearZero(){
+        double s = 1e-8;
+        return (Math.abs(e[0]) < s) && (Math.abs(e[1]) < s) && (Math.abs(e[2]) < s);
+    }
+
     public static Vec3 random(){
         return new Vec3(rtweekend.random_double(), rtweekend.random_double(), rtweekend.random_double());
     }
@@ -124,6 +129,10 @@ public class Vec3 {
             return on_unit_sphere;
         else
             return on_unit_sphere.nega();
+    }
+
+    public static Vec3 reflect(Vec3 v, Vec3 n){
+        return v.sub(n.multiply(2 * Vec3.dot(v,n)));
     }
 
     @Override

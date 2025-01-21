@@ -19,11 +19,23 @@ public class Color extends Vec3{
         return new Color(x() * t, y() * t, z() * t);
     }
 
+    public double linearToGamma(double linear_component){
+        if(linear_component > 0){
+            return Math.sqrt(linear_component);
+        }
+
+        return 0;
+    }
+
     public static void writeColor(FileWriter writer, Color pixelColor) throws IOException {
         //clamp values between 0 to 1
         double r = Math.min(Math.max(pixelColor.x(), 0), 1);
         double g = Math.min(Math.max(pixelColor.y(), 0), 1);
         double b = Math.min(Math.max(pixelColor.z(), 0), 1);
+
+        r = pixelColor.linearToGamma(r);
+        g = pixelColor.linearToGamma(g);
+        b = pixelColor.linearToGamma(b);
 
         Interval intensity = new Interval(0.000, 0.999);
         //translate 0,1 to byte range [0,255]
