@@ -135,6 +135,13 @@ public class Vec3 {
         return v.sub(n.multiply(2 * Vec3.dot(v,n)));
     }
 
+    public static Vec3 refract(Vec3 uv, Vec3 n, double etai_over_etat) {
+        double cos_theta = Math.min(Vec3.dot(uv.nega(), n), 1.0);
+        Vec3 r_out_perp = uv.add(n.multiply(cos_theta)).multiply(etai_over_etat);
+        Vec3 r_out_parallel = n.multiply(-Math.sqrt(Math.abs(1.0 - r_out_perp.lengthSquared())));
+        return r_out_perp.add(r_out_parallel);
+    }
+
     @Override
     public String toString() {
         return e[0] + " " + e[1] + " " + e[2];

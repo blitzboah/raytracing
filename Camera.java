@@ -9,11 +9,17 @@ public class Camera {
     public int samples_per_pixel = 10; //count of random samples for each pixel
     public int max_depth = 10;
 
+    public double vfov = 90;
+    public Vec3.Point3 lookform = new Vec3.Point3(0,0,0);
+    public Vec3.Point3 lookAt = new Vec3.Point3(0,0,-1);
+    public Vec3 vup = new Vec3(0,1,0);
+
+
     // camera parameters
     private double pixel_samples_scales; //color scale factor for a sum of pixel samples
-    private Vec3.Point3 cameraCenter = new Vec3.Point3(0, 1, 0.7);
-    private double viewportHeight = 2.0;
-    private double viewportWidth = viewportHeight * aspect_ratio;
+    private Vec3.Point3 cameraCenter;
+    private double viewportHeight;
+    private double viewportWidth;
     private double focalLength = 1.0;
 
     // precomputed properties
@@ -22,13 +28,25 @@ public class Camera {
     private Vec3 pixelDeltaU;
     private Vec3 pixelDeltaV;
     private Vec3 pixel00Loc;
+    private Vec3 u,v,w;
 
     private void init() {
+        cameraCenter = lookform;
 
+        focalLength = (lookform.sub(lookAt)).length();
         pixel_samples_scales = 1.0 / samples_per_pixel;
-        // vectors defining the viewport
-        viewportU = new Vec3(viewportWidth, 0, 0);
-        viewportV = new Vec3(0, -viewportHeight, 0);
+
+        double theta = rtweekend.degreesToRadian(vfov);
+        double h = Math.tan(theta/2);
+        viewportHeight = 2*h*focalLength;
+        viewportWidth = viewportHeight * ((double) image_width/image_height);
+
+        w = Vec3.unitVector(lookform.sub(lookAt));
+        u = Vec3.unitVector(Vec3.cross(vup, w));
+        v = Vec3.cross(w,u);
+
+        viewportU = u.multiply(viewportWidth);
+        viewportV = v.nega().multiply(viewportHeight);
 
         // pixel delta vectors
         pixelDeltaU = viewportU.divide(image_width);
@@ -36,9 +54,9 @@ public class Camera {
 
         // upper left pixel
         Vec3 viewportUpperLeft = cameraCenter
-                .sub(new Vec3(0, 0, focalLength))
-                .sub(viewportU.multiply(0.5))
-                .sub(viewportV.multiply(0.5));
+                .sub(w.multiply(focalLength)) // center - (focal_length * w)
+                .sub(viewportU.divide(2))     // - viewport_u/2
+                .sub(viewportV.divide(2));    // - viewport_v/2
         pixel00Loc = viewportUpperLeft.add(pixelDeltaU.multiply(0.5)).add(pixelDeltaV.multiply(0.5));
     }
 
