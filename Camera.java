@@ -33,6 +33,9 @@ public class Camera {
     private void init() {
         cameraCenter = lookform;
 
+        image_height = (int)(image_width / aspect_ratio);
+        image_height = (image_height < 1) ? 1 : image_height;
+
         focalLength = (lookform.sub(lookAt)).length();
         pixel_samples_scales = 1.0 / samples_per_pixel;
 
@@ -113,10 +116,6 @@ public class Camera {
 
         Vec3 unitDirection = Vec3.unitVector(r.direction());
         double t = 0.5 * (unitDirection.y() + 1.0);
-        return new Color(
-                (1.0 - t) * 1.0 + t * 0.2,
-                (1.0 - t) * 1.0 + t * 0.3,
-                (1.0 - t) * 1.0 + t * 1.0
-        );
+        return new Color(Math.random(), Math.random(), Math.random());
     }
 }
