@@ -9,4 +9,4 @@ sh run.sh
 ```
 https://raytracing.github.io/books/RayTracingInOneWeekend.html
 
-![image1][outputs/Ggl_ZuPaEAAi9lu.png]
+![image1](outputs/Ggl_ZuPaEAAi9lu.png)
