@@ -101,21 +101,29 @@ public class Camera {
         return new Vec3(rtweekend.random_double() - 0.5, rtweekend.random_double() - 0.5, 0);
     }
 
-    public Color rayColor(Ray r, int depth, Hittable world) {
-        if(depth <= 0) return new Color(0,0,0);
 
+    //here the u can change the raycolor use claude or smth to suggest diff ray colors
+    public Color rayColor(Ray r, int depth, Hittable world) {
         HitRecord rec = new HitRecord();
+
+        if (depth <= 0) return new Color(0,0,0);
+
         if (world.hit(r, new Interval(0.001, Double.POSITIVE_INFINITY), rec)) {
-            Ray scattered = new Ray(rec.p, new Vec3());
-            Color attenuation = new Color();
-            if(rec.mat.scatter(r,rec,attenuation,scattered)) {
-                Vec3 temp = attenuation.multiply(rayColor(scattered, depth-1, world));
-                return new Color(temp.x(), temp.y(), temp.z()); // Create a new Color from the Vec3
-            }
+            double t = (rec.normal.y() + 1.0) * 0.5;
+            return new Color(
+                    0.9 * t + 0.3,  // red component
+                    0.7 * t + 0.3,  // green component
+                    0.9 * t + 0.3   // blue component
+            );
         }
 
+        // Background - simple gradient
         Vec3 unitDirection = Vec3.unitVector(r.direction());
         double t = 0.5 * (unitDirection.y() + 1.0);
-        return new Color(Math.random(), Math.random(), Math.random());
+        return new Color(
+                (1.0-t) + t * 0.5,  // blend from white to light blue
+                (1.0-t) + t * 0.7,
+                (1.0-t) + t * 1.0
+        );
     }
 }

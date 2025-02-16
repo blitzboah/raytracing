@@ -1,6 +1,8 @@
 public class Main {
     public static void main(String[] args) {
 
+        //add or remove balls here. more balls more time ig, cuz its single threaded also can depend on camera's width n height
+
         //materials
         Lambertian material_ground = new Lambertian(new Color(0.2,0.8,0.2));
         Lambertian material_center = new Lambertian(new Color(0.9,0.9,0.9));
